@@ -1,0 +1,82 @@
+# Manifesto da Habilidade — Maná Builder
+# Ver: ADR 2026-06-26-mana-builder-matriz-cobertura (vault)
+# Ver: ADR 2026-06-30-stack-dados-mana-builder (par com se-dataset-reader)
+
+# Identidade
+nome: mana-habilidade-data-lake-pg
+descricao: Cache durável JSONB no Postgres pra esconder fontes lentas atrás de uma camada de leitura rápida. Padrão lake-first com fallback ao-vivo + advisory_lock pra concorrência (Gunicorn N workers). Habilidade canônica da Maná Builder, sub-categoria emergente "dados".
+categoria: habilidade
+
+# Ownership
+owner: xayer-mana
+codeowners: [xayer-mana]
+
+# Versão
+versao-atual: 0.1.0
+ultima-revisao: 2026-06-30
+
+# Status do ciclo de vida
+# ADR 2026-06-28-habilidade-canonica-gate-consumidor-real
+status: alpha
+consumidores-migrados: []
+notas-de-migracao:
+  - "2026-06-30: extração inicial. Origem prática: agente-pedidos data lake inline (ADR 2026-06-30-agente-pedidos-data-lake-banco-mana). Decisão de extrair antecipadamente (sem aguardar 2ª cópia) baseada em Xayer ('vamos usar muito'). Pendente migração do agente-pedidos pra cumprir gate beta."
+
+# Matriz 3D (Maná Builder)
+cadeia: transversal           # apoio | negocio | gestao | transversal
+sub-categoria-emergente: dados   # introduzida no ADR 2026-06-30-stack-dados-mana-builder
+hierarquia: []                # transversal
+tipo_artefato: habilidade
+
+# Relações
+substitui-copias-em:
+  - agente-pedidos             # _lake_init/_lake_get/_lake_put inline em app.py (ADR 2026-06-30)
+consumidores: []
+consumidores-planejados: [agente-pedidos, agente-gestor-comercial, agente-tms, agente-monitor, qualquer-painel-com-fonte-lenta]
+depende-de: []
+habilidade-irma: se-dataset-reader   # par do stack de dados (ADR 2026-06-30-stack-dados-mana-builder)
+
+# Dependências
+deps-hard: [psycopg2-binary>=2.9.10]   # wheel Python 3.13
+deps-opcionais: [apscheduler]          # apenas se consumidor usar lake.schedule_cron (não implementado v0.1.0)
+binarios-sistema: []
+
+# Schema padrão
+schema-padrao: |
+  CREATE SCHEMA IF NOT EXISTS {schema};
+  CREATE TABLE IF NOT EXISTS {schema}.{table_name} (
+    chave         TEXT PRIMARY KEY,
+    dados         JSONB NOT NULL,
+    atualizado_em TIMESTAMPTZ DEFAULT NOW()
+  );
+
+# Distribuição
+registry: git-tag
+url-pacote: ""
+url-repo: https://github.com/Sementesmana/mana-habilidade-data-lake-pg
+url-instalacao: "git+https://github.com/Sementesmana/mana-habilidade-data-lake-pg.git@v0.1.0"
+
+# Integração com sistemas legados
+integracoes-legados: []
+
+# Skill no Plugin Maná
+skill-publicada: false
+url-skill-no-plugin: ""
+
+# LGPD
+toca-pii: false       # transporta JSONB; consumidor decide pseudonimização no momento do uso
+
+# ADRs aplicáveis
+adrs:
+  - 2026-06-23-mana-data-gateway-se-governa-banco-mana-serve   # arquitetura materializada (L2 cache)
+  - 2026-06-24-plataforma-agentica-mana-5-camadas
+  - 2026-06-26-mana-builder-matriz-cobertura
+  - 2026-06-26-fluxo-criacao-habilidade-mana-builder
+  - 2026-06-26-distribuicao-via-git-tag-pacotes-mana-builder
+  - 2026-06-26-plugin-mana-skills-cowork
+  - 2026-06-28-habilidade-canonica-gate-consumidor-real
+  - 2026-06-30-agente-pedidos-data-lake-banco-mana   # origem prática (1ª aplicação)
+  - 2026-06-30-stack-dados-mana-builder              # formaliza par com se-dataset-reader
+
+# Tags livres
+tags: [data-lake, postgres, jsonb, cache, lake-first, fallback, advisory-lock, ingestao, dados, transversal, mana-builder, materializa-mana-data-gateway]

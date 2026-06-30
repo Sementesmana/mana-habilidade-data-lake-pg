@@ -1,0 +1,77 @@
+[project]
+name = "mana-habilidade-data-lake-pg"
+version = "0.1.0"
+description = "Cache durável JSONB no Postgres pra esconder fontes lentas atrás de uma camada de leitura rápida. Padrão lake-first com fallback ao-vivo + advisory_lock. Habilidade canônica da Maná Builder, sub-categoria dados (par com se-dataset-reader)."
+readme = "README.md"
+license = { text = "Proprietary" }
+requires-python = ">=3.10"
+authors = [
+    { name = "Sementes Maná LTDA" }
+]
+keywords = ["mana", "habilidade", "mana-builder", "data-lake", "postgres", "cache", "jsonb", "lake-first", "advisory-lock"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: Other/Proprietary License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+
+dependencies = [
+    "psycopg2-binary>=2.9.10",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4",
+    "pytest-cov>=4.1",
+    "ruff>=0.1",
+    "mypy>=1.6",
+]
+
+[project.urls]
+Homepage = "https://github.com/Sementesmana/mana-habilidade-data-lake-pg"
+Repository = "https://github.com/Sementesmana/mana-habilidade-data-lake-pg"
+Issues = "https://github.com/Sementesmana/mana-habilidade-data-lake-pg/issues"
+
+[build-system]
+requires = ["hatchling>=1.18"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/mana_habilidade_data_lake_pg"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/src",
+    "/tests",
+    "/examples",
+    "/README.md",
+    "/SKILL.md",
+    "/manifest.yaml",
+    "/LICENSE",
+    "/pyproject.toml",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "-v --cov=src --cov-report=term-missing --cov-fail-under=70"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "UP", "B", "C4", "SIM"]
+ignore = ["E501"]
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+warn_return_any = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true

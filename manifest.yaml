@@ -17,7 +17,7 @@ ultima-revisao: 2026-07-03
 
 # Status do ciclo de vida
 # ADR 2026-06-28-habilidade-canonica-gate-consumidor-real
-status: alpha   # gate consumidor-real CUMPRIDO 2026-07-03 — flip pra beta pendente de aval Xayer
+status: beta   # flip 2026-07-03 (aval Xayer): gate consumidor-real cumprido pelo agente-comercio-revendas
 consumidores-migrados: [agente-comercio-revendas]
 notas-de-migracao:
   - "2026-06-30: extração inicial. Origem prática: agente-pedidos data lake inline (ADR 2026-06-30-agente-pedidos-data-lake-banco-mana). Decisão de extrair antecipadamente (sem aguardar 2ª cópia) baseada em Xayer ('vamos usar muito'). Pendente migração do agente-pedidos pra cumprir gate beta."

@@ -13,7 +13,7 @@ codeowners: [xayer-mana]
 
 # Versão
 versao-atual: 0.1.0
-ultima-revisao: 2026-07-03
+ultima-revisao: 2026-07-04
 
 # Status do ciclo de vida
 # ADR 2026-06-28-habilidade-canonica-gate-consumidor-real
@@ -22,6 +22,7 @@ consumidores-migrados: [agente-comercio-revendas]
 notas-de-migracao:
   - "2026-06-30: extração inicial. Origem prática: agente-pedidos data lake inline (ADR 2026-06-30-agente-pedidos-data-lake-banco-mana). Decisão de extrair antecipadamente (sem aguardar 2ª cópia) baseada em Xayer ('vamos usar muito'). Pendente migração do agente-pedidos pra cumprir gate beta."
   - "2026-07-03: 1º CONSUMIDOR REAL em produção — agente-comercio-revendas (piloto Dayan 2): sync lake-first de pedidos SA (chave sa_orders_<safra>, schema comercializacao, lock 720124) + botão Atualizar Data Lake. Validado em prod (snapshot 275 pedidos). Gate consumidor-real cumprido; migração do agente-pedidos (inline→habilidade) segue pendente."
+  - "2026-07-04: 2º consumidor EM DEPLOY — agente-documentos Aba 2 v2 (ADR 2026-07-04-aba2-v2-deterministica-lake-sem-check-cpr): ingestão estruturada de docs (chave doc:<md5>) + histórico de análises (chave analise:<idprocess>), schema analise_documental, lock 778912. Requer DATABASE_URL no Railway; degradação graciosa sem ela. Ao validar em prod, mover pra consumidores-migrados (candidato ao gate beta→producao)."
 
 # Matriz 3D (Maná Builder)
 cadeia: transversal           # apoio | negocio | gestao | transversal
@@ -33,7 +34,7 @@ tipo_artefato: habilidade
 substitui-copias-em:
   - agente-pedidos             # _lake_init/_lake_get/_lake_put inline em app.py (ADR 2026-06-30)
 consumidores: []
-consumidores-planejados: [agente-pedidos, agente-gestor-comercial, agente-tms, agente-monitor, qualquer-painel-com-fonte-lenta]
+consumidores-planejados: [agente-documentos, agente-pedidos, agente-gestor-comercial, agente-tms, agente-monitor, qualquer-painel-com-fonte-lenta]
 depende-de: []
 habilidade-irma: se-dataset-reader   # par do stack de dados (ADR 2026-06-30-stack-dados-mana-builder)
 

@@ -18,11 +18,12 @@ ultima-revisao: 2026-07-04
 # Status do ciclo de vida
 # ADR 2026-06-28-habilidade-canonica-gate-consumidor-real
 status: beta   # flip 2026-07-03 (aval Xayer): gate consumidor-real cumprido pelo agente-comercio-revendas
-consumidores-migrados: [agente-comercio-revendas]
+consumidores-migrados: [agente-comercio-revendas, agente-documentos]
 notas-de-migracao:
   - "2026-06-30: extração inicial. Origem prática: agente-pedidos data lake inline (ADR 2026-06-30-agente-pedidos-data-lake-banco-mana). Decisão de extrair antecipadamente (sem aguardar 2ª cópia) baseada em Xayer ('vamos usar muito'). Pendente migração do agente-pedidos pra cumprir gate beta."
   - "2026-07-03: 1º CONSUMIDOR REAL em produção — agente-comercio-revendas (piloto Dayan 2): sync lake-first de pedidos SA (chave sa_orders_<safra>, schema comercializacao, lock 720124) + botão Atualizar Data Lake. Validado em prod (snapshot 275 pedidos). Gate consumidor-real cumprido; migração do agente-pedidos (inline→habilidade) segue pendente."
-  - "2026-07-04: 2º consumidor EM DEPLOY — agente-documentos Aba 2 v2 (ADR 2026-07-04-aba2-v2-deterministica-lake-sem-check-cpr): ingestão estruturada de docs (chave doc:<md5>) + histórico de análises (chave analise:<idprocess>), schema analise_documental, lock 778912. Requer DATABASE_URL no Railway; degradação graciosa sem ela. Ao validar em prod, mover pra consumidores-migrados (candidato ao gate beta→producao)."
+  - "2026-07-04: 2º consumidor EM DEPLOY — agente-documentos Aba 2 v2 (ADR 2026-07-04-aba2-v2-deterministica-lake-sem-check-cpr): ingestão estruturada de docs (chave doc:<md5>) + histórico de análises (chave analise:<idprocess>), schema analise_documental, lock 778912. Requer DATABASE_URL no Railway; degradação graciosa sem ela."
+  - "2026-07-05: 2º consumidor VALIDADO EM PROD — smoke WF 000002: 9 docs LAKE HIT em 0,4s (análise 108,9s→57,8s; contador gateway +1 em vez de +4). GOTCHA de integração descoberto: read() retorna TUPLA (dados, atualizado_em) — consumidor que tratar como dict tem miss eterno silencioso. Candidata ao gate beta→producao (2 consumidores reais); flip de status na decisão do Xayer."
 
 # Matriz 3D (Maná Builder)
 cadeia: transversal           # apoio | negocio | gestao | transversal
